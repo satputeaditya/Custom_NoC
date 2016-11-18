@@ -25,51 +25,61 @@ radix -hex
 
 
 
-add wave -divider -height 30 "NoC READ / MASTER WRITE"
+add wave -divider -height 12 "NoC READ / MASTER WRITE"
 add wave sim:/NoC_new_again/rst
 add wave sim:/NoC_new_again/clk
 add wave sim:/NoC_new_again/CMD_READ
 add wave sim:/NoC_new_again/ALE_READ
 add wave sim:/NoC_new_again/READ_THIS
 
-add wave -divider -height 30 "NoC WRITE / MASTER READ"
-add wave sim:/NoC_new_again/CMD_READ
-add wave sim:/NoC_new_again/ALE_READ
+#add wave -divider -height 12 "NoC WRITE / MASTER READ"	#COMMENTED OUT
+#add wave sim:/NoC_new_again/CMD_READ					#COMMENTED OUT
+#add wave sim:/NoC_new_again/ALE_READ					#COMMENTED OUT
 
 
-add wave -divider -height 30 " REGISTERS"
-
-add wave sim:/NoC_new_again/READ_CODE
-add wave sim:/NoC_new_again/READ_RESP_CODE
-add wave sim:/NoC_new_again/WRITE_CODE
-add wave sim:/NoC_new_again/WRITE_RESP_CODE
-add wave sim:/NoC_new_again/MESSAGE_CODE
-add wave sim:/NoC_new_again/SOURCE_ID
-add wave sim:/NoC_new_again/RETURN_ID
-add wave sim:/NoC_new_again/ADDRESS
-add wave sim:/NoC_new_again/READ_LEN
-add wave sim:/NoC_new_again/READ_PKT_SIZE
+add wave -divider -height 12 " READ REGISTERS"
+add wave -color purple sim:/NoC_new_again/READ_CODE
+#add wave -color purple sim:/NoC_new_again/READ_RESP_CODE    #COMMENTED OUT
+add wave -color purple sim:/NoC_new_again/READ_SOURCE_ID
+add wave -color purple sim:/NoC_new_again/READ_ADDRESS
+add wave -color purple sim:/NoC_new_again/READ_LEN
+add wave -color purple sim:/NoC_new_again/READ_PKT_SIZE
+add wave -color blue sim:/NoC_new_again/READ_count
 
 
-add wave -divider -height 30 " STATE MC 1"
 
-add wave sim:/NoC_new_again/STATE_1
-add wave sim:/NoC_new_again/JUMP
-add wave sim:/NoC_new_again/IDLE_count
-add wave sim:/NoC_new_again/READ_count
-add wave sim:/NoC_new_again/ERR_LOC
+add wave -divider -height 12 " WRITE REGISTERS"
+add wave -color yellow sim:/NoC_new_again/WRITE_CODE
+#add wave -color yellow sim:/NoC_new_again/WRITE_RESP_CODE  #COMMENTED OUT
+add wave -color yellow sim:/NoC_new_again/WRITE_SOURCE_ID
+add wave -color yellow sim:/NoC_new_again/WRITE_ADDRESS
+add wave -color yellow sim:/NoC_new_again/WRITE_LEN
+add wave -color yellow sim:/NoC_new_again/WRITE_PKT_SIZE
+add wave -color blue sim:/NoC_new_again/WRITE_count
 
 
-add wave -divider -height 30 " OTHER SIGNALS"
+#add wave sim:/NoC_new_again/MESSAGE_CODE				#COMMENTED OUT
 
-add wave sim:/NoC_new_again/LEN
-add wave sim:/NoC_new_again/ONES
-add wave sim:/NoC_new_again/ADDR_LEN
-add wave sim:/NoC_new_again/READ_RESP_RESERVED
-add wave sim:/NoC_new_again/ERROR
-add wave sim:/NoC_new_again/ERR_CODE
-add wave sim:/NoC_new_again/MESSAGE_LENGTH
 
+add wave -divider -height 12 " STATE MC 1"
+add wave -color gold sim:/NoC_new_again/STATE_1
+add wave -color magenta sim:/NoC_new_again/JUMP
+add wave -color blue sim:/NoC_new_again/IDLE_count
+add wave -color blue sim:/NoC_new_again/ERR_LOC
+
+
+add wave -divider -height 12 " READ SIGNALS"
+add wave sim:/NoC_new_again/R_LEN_BIT
+#add wave sim:/NoC_new_again/R_ONES    					#COMMENTED OUT
+add wave sim:/NoC_new_again/R_ADDR_LEN
+
+add wave -divider -height 12 " WRITE SIGNALS"
+add wave sim:/NoC_new_again/W_LEN_BIT
+#add wave sim:/NoC_new_again/W_ONES						#COMMENTED OUT
+add wave sim:/NoC_new_again/W_ADDR_LEN
+
+#add wave sim:/NoC_new_again/READ_RESP_RESERVED			#COMMENTED OUT
+#add wave sim:/NoC_new_again/MESSAGE_LENGTH				#COMMENTED OUT
 
 
 
@@ -90,7 +100,7 @@ run
 force -freeze sim:/NoC_new_again/CMD_READ 81 2
 force -freeze sim:/NoC_new_again/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
+force -freeze sim:/NoC_new_again/CMD_READ 99 2
 force -freeze sim:/NoC_new_again/ALE_READ 0 2
 run
 force -freeze sim:/NoC_new_again/CMD_READ 20 2
@@ -184,7 +194,7 @@ force -freeze sim:/NoC_new_again/CMD_READ 63 2
 force -freeze sim:/NoC_new_again/ALE_READ 1 2
 run
 force -freeze sim:/NoC_new_again/CMD_READ 8D 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
+force -freeze sim:/NoC_new_again/ALE_READ 0 2
 run
 force -freeze sim:/NoC_new_again/CMD_READ 08 2
 force -freeze sim:/NoC_new_again/ALE_READ 0 2
