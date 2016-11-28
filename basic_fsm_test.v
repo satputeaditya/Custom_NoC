@@ -22,8 +22,8 @@ parameter END 				=	4'b1_111;
 //******** FIFO size parameters ********
 parameter WIDTH = 8; 
 parameter DEPTH = 256;
-parameter BYTES_1 = 8;		// READ CODE 
-parameter BYTES_2 = 11;		// WRITE CODE 
+parameter BYTES_1 = 8;		// READ CODE MAX BYTES LIMIT
+parameter BYTES_2 = 11;		// WRITE CODE MAX BYTES LIMIT
 				
 //******** Registers to store data ********
 
@@ -71,6 +71,9 @@ wire READ_RESP_RESERVED;
 wire [4:0] MESSAGE_LENGTH;
 wire [8:0] READ_THIS;
 reg  [8:0] WRITE_THIS;
+
+reg CRC_Sel, CRC_RW;
+reg [31:0] CRC_addr, CRC_data_wr, CRC_data_rd ;
 
 reg  READ_count_re1 , READ_count_re2;
 wire READ_count_re;
@@ -140,7 +143,7 @@ always@(*)
 				end
 		end
 
-//******** Process for  ********
+//******** Process for current state of NoC read ********
 	
 always@(*)
 	begin	
@@ -161,7 +164,7 @@ always@(*)
 
 	
 	
-//******** Process for  ********
+//******** Process for serial shift registers for READ / WRITE  ********
 	
 always@(negedge clk, posedge rst)
 	begin	
@@ -183,7 +186,7 @@ always@(negedge clk, posedge rst)
 	
 
 
-//******** Process for  ********
+//******** Process for  READ / WRITE counters (sequrntial logic)********
 	
 always@(negedge clk or posedge rst)
 	begin	
@@ -203,7 +206,7 @@ always@(negedge clk or posedge rst)
 				endcase 				
 	end
 
-//******** Process for  ********
+//******** Process for READ / WRITE counter control (combinational logic) ********
 	
 always@(*)
 	begin	
@@ -219,7 +222,7 @@ always@(*)
 			end
 	end	
 
-//******** Process for  ********
+//******** Process for shift registers for detecting rising edge of READ / WRITE count equal ********
 	
 always@(negedge clk or posedge rst)
 	begin	
@@ -240,7 +243,7 @@ always@(negedge clk or posedge rst)
 	end
 
 	
-//******** Process for  ********
+//******** Process for storing data from shift registers to appropriate registers ********
 	
 always@(negedge clk or posedge rst)
 	begin	
@@ -287,6 +290,8 @@ always@(negedge clk or posedge rst)
 					SIPO_2_copy 	<= SIPO_2;					
 				end				
 	end
+
 	
+ crc U1 (rst, clk, CRC_Sel, CRC_RW, CRC_addr, CRC_data_wr, CRC_data_rd );
 	
 endmodule
