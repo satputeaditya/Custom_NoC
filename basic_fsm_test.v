@@ -144,10 +144,15 @@ always@(*)
 	
 always@(*)
 	begin	
-		if (rst)READ_SM <= 'b0;
+		if (rst)
+			begin
+				READ_SM <= 'b0;
+				READ_CODE <= 'b0;
+				WRITE_CODE <= 'b0;
+			end				
 		else
 				casez (READ_THIS[8:5])
-						IDLE	: begin  	READ_SM <= 8'h00;   							end
+						IDLE	: begin  	READ_SM <= 8'h03;   							end
 						READ	: begin 	READ_SM <= 8'h01; 	READ_CODE 	<= READ_THIS; 	end
 						WRITE	: begin 	READ_SM <= 8'h02; 	WRITE_CODE 	<= READ_THIS; 	end
 						default	: ;
@@ -168,9 +173,10 @@ always@(negedge clk, posedge rst)
 			end
 		else		
 				casez (READ_SM)
-					8'h00	: begin IDLE_count <= IDLE_count +1;							end		// IDLE
+					8'h00	: begin /* DO NOTHING IN THIS STATE , */						end		// IDLE
 					8'h01 	: begin SIPO_1 <=  {SIPO_1[(BYTES_1-1)*8-1:0],CMD_READ};	  	end 	// READ
 					8'h02 	: begin SIPO_2 <=  {SIPO_2[(BYTES_2-1)*8-1:0],CMD_READ};		end		// WRITE			
+					8'h03	: begin IDLE_count <= IDLE_count +1;							end		// IDLE					
 					default : ;
 				endcase 				
 	end
@@ -188,9 +194,12 @@ always@(negedge clk or posedge rst)
 			end
 		else									
 				casez (READ_SM)
-					8'h01 	: begin if (READ_count_en) 		READ_count 	<= 'b0; else READ_count  <= READ_count +1;	  	end 	// IDLE    [BYTES*8-1:0]
-					8'h02 	: begin if (WRITE_count_en) 	WRITE_count <= 'b0; else WRITE_count <= WRITE_count +1;		end		// READ			
-					default : ;
+					8'h01 	: 	begin if (READ_count_en) 	READ_count 	<= 'b0; else READ_count  <= READ_count +1;	  	WRITE_count <= 'b0;	end 	// IDLE    
+					8'h02 	: 	begin if (WRITE_count_en) 	WRITE_count <= 'b0; else WRITE_count <= WRITE_count +1;		READ_count 	<= 'b0;	end		// READ			
+					default : 	begin
+									READ_count <= 'b0;
+									WRITE_count <= 'b0;
+								end
 				endcase 				
 	end
 
@@ -206,13 +215,13 @@ always@(*)
 		else
 			begin				
 				if (READ_count 	> READ_PKT_SIZE) 	READ_count_en 	<= 'b1; else READ_count_en   <= 'b0;									
-				if (WRITE_count > WRITE_PKT_SIZE) 	WRITE_count_en 	<= 'b1; else WRITE_count_en  <= 'b0;
+				if (WRITE_count >= WRITE_PKT_SIZE) 	WRITE_count_en 	<= 'b1; else WRITE_count_en  <= 'b0;
 			end
 	end	
 
 //******** Process for  ********
 	
-always@(posedge clk or posedge rst)
+always@(negedge clk or posedge rst)
 	begin	
 		if (rst)
 			begin
@@ -237,6 +246,7 @@ always@(negedge clk or posedge rst)
 	begin	
 		if (rst)
 			begin
+				SIPO_1_copy 	<= 'b0;
 				READ_SOURCE_ID 	<= 'b0;
 				READ_ADDRESS_1 	<= 'b0;
 				READ_ADDRESS_2 	<= 'b0;
@@ -245,6 +255,7 @@ always@(negedge clk or posedge rst)
 				READ_LEN_1		<= 'b0;
 				READ_LEN_2		<= 'b0;				
 
+				SIPO_2_copy 		<= 'b0;
 				WRITE_SOURCE_ID 	<= 'b0;
 				WRITE_ADDRESS_1 	<= 'b0;
 				WRITE_ADDRESS_2 	<= 'b0;
@@ -270,8 +281,8 @@ always@(negedge clk or posedge rst)
 			if (WRITE_count_re)
 				begin				
 				case (W_LEN_BIT)
-					1'b0	: 	{WRITE_SOURCE_ID,WRITE_ADDRESS_4,WRITE_ADDRESS_3,WRITE_ADDRESS_2,WRITE_ADDRESS_1,WRITE_DATA_4,WRITE_DATA_3,WRITE_DATA_2,WRITE_DATA_1,WRITE_LEN_1} <=  SIPO_2[72:0];
-					1'b1	: 	{WRITE_SOURCE_ID,WRITE_ADDRESS_4,WRITE_ADDRESS_3,WRITE_ADDRESS_2,WRITE_ADDRESS_1,WRITE_DATA_4,WRITE_DATA_3,WRITE_DATA_2,WRITE_DATA_1,WRITE_LEN_1,WRITE_LEN_2}  <=  SIPO_2[80:0];
+					1'b0	: 	{WRITE_SOURCE_ID,WRITE_ADDRESS_4,WRITE_ADDRESS_3,WRITE_ADDRESS_2,WRITE_ADDRESS_1,WRITE_DATA_4,WRITE_DATA_3,WRITE_DATA_2,WRITE_DATA_1,WRITE_LEN_1} <=  SIPO_2[79:0];
+					1'b1	: 	{WRITE_SOURCE_ID,WRITE_ADDRESS_4,WRITE_ADDRESS_3,WRITE_ADDRESS_2,WRITE_ADDRESS_1,WRITE_DATA_4,WRITE_DATA_3,WRITE_DATA_2,WRITE_DATA_1,WRITE_LEN_1,WRITE_LEN_2}  <=  SIPO_2[71:0];
 				endcase																				
 					SIPO_2_copy 	<= SIPO_2;					
 				end				
