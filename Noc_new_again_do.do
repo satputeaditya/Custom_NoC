@@ -9,9 +9,9 @@ if {[file exists presynth/_info]} {
 vmap presynth presynth
 vmap proasic3e "C:/Microsemi/Libero_v9.2/Designer/lib/modelsim/precompiled/vlog/proasic3e"
 
-vlog -work presynth "${PROJECT_DIR}/hdl/basic_fsm_test.v"
+vlog -work presynth "${PROJECT_DIR}/hdl/NocC_ver_2.v"
 
-vsim -L proasic3e -L presynth  -t 1ps presynth.NoC_new_again
+vsim -L proasic3e -L presynth  -t 1ps presynth.NocC_ver_2
 # The following lines are commented because no testbench is associated with the project
 # add wave /testbench/*
 # run 1000ns
@@ -26,210 +26,434 @@ radix -hex
 
 
 add wave -divider -height 12 "NoC READ / MASTER WRITE"
-add wave sim:/NoC_new_again/rst
-add wave sim:/NoC_new_again/clk
-add wave sim:/NoC_new_again/CMD_READ
-add wave sim:/NoC_new_again/ALE_READ
-add wave sim:/NoC_new_again/READ_THIS
+add wave sim:/NocC_ver_2/rst
+add wave sim:/NocC_ver_2/clk
+add wave sim:/NocC_ver_2/CMD_READ
+add wave sim:/NocC_ver_2/ALE_READ
+add wave sim:/NocC_ver_2/READ_SM
+add wave sim:/NocC_ver_2/IDLE_count
 
-#add wave -divider -height 12 "NoC WRITE / MASTER READ"	#COMMENTED OUT
-#add wave sim:/NoC_new_again/CMD_READ					#COMMENTED OUT
-#add wave sim:/NoC_new_again/ALE_READ					#COMMENTED OUT
+add wave sim:/NocC_ver_2/SIPO_1
+add wave sim:/NocC_ver_2/SIPO_1_copy
+
+add wave sim:/NocC_ver_2/SIPO_2
+add wave sim:/NocC_ver_2/SIPO_2_copy					
+
+
+add wave sim:/NocC_ver_2/READ_PKT_SIZE
+add wave sim:/NocC_ver_2/READ_count
+add wave sim:/NocC_ver_2/READ_count_en
+add wave sim:/NocC_ver_2/READ_count_re
+
+add wave sim:/NocC_ver_2/WRITE_PKT_SIZE
+add wave sim:/NocC_ver_2/WRITE_count
+add wave sim:/NocC_ver_2/WRITE_count_en
+add wave sim:/NocC_ver_2/WRITE_count_re
+
+add wave -divider -height 12 "NoC WRITE / MASTER READ"
+add wave sim:/NocC_ver_2/CMD_READ					
+add wave sim:/NocC_ver_2/ALE_READ					
 
 
 add wave -divider -height 12 " READ REGISTERS"
-add wave -color purple sim:/NoC_new_again/READ_CODE
-#add wave -color purple sim:/NoC_new_again/READ_RESP_CODE    #COMMENTED OUT
-add wave -color purple sim:/NoC_new_again/READ_SOURCE_ID
-add wave -color purple sim:/NoC_new_again/READ_ADDRESS
-add wave -color purple sim:/NoC_new_again/READ_LEN
-add wave -color purple sim:/NoC_new_again/READ_PKT_SIZE
-add wave -color blue sim:/NoC_new_again/READ_count
 
-
+add wave sim:/NocC_ver_2/READ_CODE
+add wave sim:/NocC_ver_2/READ_SOURCE_ID
+add wave sim:/NocC_ver_2/READ_ADDRESS
+add wave sim:/NocC_ver_2/READ_LEN
 
 add wave -divider -height 12 " WRITE REGISTERS"
-add wave -color yellow sim:/NoC_new_again/WRITE_CODE
-#add wave -color yellow sim:/NoC_new_again/WRITE_RESP_CODE  #COMMENTED OUT
-add wave -color yellow sim:/NoC_new_again/WRITE_SOURCE_ID
-add wave -color yellow sim:/NoC_new_again/WRITE_ADDRESS
-add wave -color yellow sim:/NoC_new_again/WRITE_LEN
-add wave -color yellow sim:/NoC_new_again/WRITE_PKT_SIZE
-add wave -color blue sim:/NoC_new_again/WRITE_count
 
+add wave sim:/NocC_ver_2/WRITE_CODE
+add wave sim:/NocC_ver_2/WRITE_SOURCE_ID
+add wave sim:/NocC_ver_2/WRITE_ADDRESS
+add wave sim:/NocC_ver_2/WRITE_DATA
+add wave sim:/NocC_ver_2/WRITE_LEN
 
-#add wave sim:/NoC_new_again/MESSAGE_CODE				#COMMENTED OUT
-
-
-add wave -divider -height 12 " STATE MC 1"
-add wave -color gold sim:/NoC_new_again/STATE_1
-add wave -color magenta sim:/NoC_new_again/JUMP
-add wave -color blue sim:/NoC_new_again/IDLE_count
-add wave -color blue sim:/NoC_new_again/ERR_LOC
-
-
-add wave -divider -height 12 " READ SIGNALS"
-add wave sim:/NoC_new_again/R_LEN_BIT
-#add wave sim:/NoC_new_again/R_ONES    					#COMMENTED OUT
-add wave sim:/NoC_new_again/R_ADDR_LEN
-
-add wave -divider -height 12 " WRITE SIGNALS"
-add wave sim:/NoC_new_again/W_LEN_BIT
-#add wave sim:/NoC_new_again/W_ONES						#COMMENTED OUT
-add wave sim:/NoC_new_again/W_ADDR_LEN
-
-#add wave sim:/NoC_new_again/READ_RESP_RESERVED			#COMMENTED OUT
-#add wave sim:/NoC_new_again/MESSAGE_LENGTH				#COMMENTED OUT
-
+#add wave -divider -height 12 " FIFO SIGNALS"
+#add wave sim:/NocC_ver_2/READ_SM_FIFO_push
+#add wave sim:/NocC_ver_2/READ_SM_FIFO_pop
+#add wave sim:/NocC_ver_2/READ_SM_FIFO_full
+#add wave sim:/NocC_ver_2/READ_SM_FIFO_empty
+#add wave sim:/NocC_ver_2/READ_SM_FIFO_data_out
+##add wave sim:/NocC_ver_2/READ_SM/memory2/mem
 
 
 run
-force -freeze sim:/NoC_new_again/rst 1 0
-force -freeze sim:/NoC_new_again/clk 1 0, 0 {50 ps} -r 100
-force -freeze sim:/NoC_new_again/CMD_READ 00 0
-force -freeze sim:/NoC_new_again/ALE_READ 1 0
+force -freeze sim:/NocC_ver_2/rst 1 0
+force -freeze sim:/NocC_ver_2/clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/NocC_ver_2/CMD_READ 00 0
+force -freeze sim:/NocC_ver_2/ALE_READ 1 0
 run
-force -freeze sim:/NoC_new_again/rst 0 0
+force -freeze sim:/NocC_ver_2/rst 0 0
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 23 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 23 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 81 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 81 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 99 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 20 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 03 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 40 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 0C 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 0C 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 63 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
-
-run
-force -freeze sim:/NoC_new_again/CMD_READ 09 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 08 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 20 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 03 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 40 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 04 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
 run
 
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2  
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 09 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 08 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-
-force -freeze sim:/NoC_new_again/CMD_READ 03 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 63 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 0D 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 20 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 03 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 40 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
-force -freeze sim:/NoC_new_again/CMD_READ 04 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 63 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 56 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ F0 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ B1 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 63 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 8D 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 08 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 20 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 03 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 40 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 04 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 00 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 01 2
-force -freeze sim:/NoC_new_again/ALE_READ 0 2
-run
-force -freeze sim:/NoC_new_again/CMD_READ 63 2
-force -freeze sim:/NoC_new_again/ALE_READ 1 2
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
 
-force -freeze sim:/NoC_new_again/CMD_READ xx 2
-force -freeze sim:/NoC_new_again/ALE_READ x 2
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 0D 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 56 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ F0 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ B1 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
 
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 8D 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 08 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 01 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 12 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 65 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 84 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ C2 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ B2 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 0D 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 01 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ E3 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ F3 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 23 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 3D 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 8C 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ ED 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 57 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ D4 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 76 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ C6 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ F9 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ E9 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ FD 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 7C 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 23 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ AA 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+
+#  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 63 2
+force -freeze sim:/NocC_ver_2/ALE_READ 1 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 77 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 00 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 20 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 03 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 40 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 04 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ E5 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ F7 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ AF 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
+run
+force -freeze sim:/NocC_ver_2/CMD_READ 72 2
+force -freeze sim:/NocC_ver_2/ALE_READ 0 2
 run
 wave zoom full
